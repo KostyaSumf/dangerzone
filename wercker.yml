@@ -1,8 +1,13 @@
-box: wercker/python
+box: alasershark/ubuntu12.04-nodejs0.10
 
 build:
     steps:
-        - pip-install
+        - script:
+            name: Pip install
+            code: pip install -r requirements.txt
+        - script:
+            name: Compile coffeescript
+            code: cake build
     after-steps:
         - alasershark/irc-notify:
             server: irc.freenode.net

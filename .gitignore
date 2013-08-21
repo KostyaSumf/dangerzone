@@ -40,3 +40,8 @@ nosetests.xml
 
 # venv
 venv
+
+# automatic mapping files created by pycharm
+.js
+coffee/.js
+*.map
