@@ -1,0 +1,12 @@
+box: wercker/python
+
+build:
+    steps:
+        - pip-install
+    after-steps:
+        - alasershark/irc-notify:
+            server: irc.freenode.net
+            port: 6667
+            nickname: DangerouserBot
+            channel: shark
+            doublehashes: true
