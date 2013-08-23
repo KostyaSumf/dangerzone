@@ -1,4 +1,4 @@
-box: alasershark/ubuntu12.04-nodejs0.10
+box: alasershark/python-coffee
 
 build:
     steps:

@@ -1,6 +1,6 @@
 window.onload = ->
   Crafty.init()
-  Crafty.sprite 128, "/images/sprite.png",
+  Crafty.sprite 128, "/static/images/sprite.png",
     grass: [0, 0, 1, 1]
     stone: [1, 0, 1, 1]
 
