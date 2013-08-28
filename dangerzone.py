@@ -6,7 +6,7 @@ variables: 'DZONE_MASTER_USER', the master username, and 'DZONE_MASTER_PASS', th
 __author__ = 'alasershark'
 
 import os
-from flask import Flask, redirect, url_for, Response, request
+from flask import Flask, redirect, url_for, Response, request, render_template
 
 players = []
 keys = {}
@@ -18,6 +18,14 @@ class Player:
 
     def __init__(self):
         players.append(self)
+        
+class Link:
+    url = None
+    name = None
+    
+    def __init(self, home, name):
+        self.url = home + "/" + name
+        self.name = name
 
 
 app = Flask(__name__)
@@ -38,11 +46,14 @@ def admin():
     """
     Will serve an admin page if player is an admin.
     """
-    admin = checkAdminAuth(request.cookies.get('dzAuthKey'))
+    # admin = checkAdminAuth(request.cookies.get('dzAuthKey'))
+    # commented out for testing, since the admin page doesn't do anything yet
+    admin = True
     if admin:
-        return "Authenticated."
+        links = [Link("admin", "stop")]
+        return render_template('links.html', links=links, title='Dangerzone Administation')
     else:
-        return Response(response="Invalid request. Either you have no authentication token in your cookies,"
+        return Response(response="Invalid request. Either you have no authentication token in your cookies, "
                                  "your key is not a valid player, or that player is not an admin.", status=400)
 
 
