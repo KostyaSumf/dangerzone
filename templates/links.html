@@ -1,0 +1,12 @@
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+<ul>
+    {% for link in links %}
+        <li><a href="{{link.url}}">{{link.name}}</a></li>
+    {% endfor %}
+</ul>
+</body>
+</html>
