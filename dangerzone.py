@@ -23,7 +23,7 @@ class Link:
     url = None
     name = None
     
-    def __init(self, home, name):
+    def __init__(self, home, name):
         self.url = home + "/" + name
         self.name = name
 
@@ -50,7 +50,8 @@ def admin():
     # commented out for testing, since the admin page doesn't do anything yet
     admin = True
     if admin:
-        links = [Link("admin", "stop")]
+        links = []
+        links.append(Link("admin", "stop"))
         return render_template('links.html', links=links, title='Dangerzone Administation')
     else:
         return Response(response="Invalid request. Either you have no authentication token in your cookies, "
