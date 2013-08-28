@@ -4,11 +4,15 @@
     var init;
     console.log('Initalizing.');
     init = function() {
-      var basesheet, canvas;
+      var basesheet, canvas, height, width;
       canvas = document.getElementById("mainCanvas");
+      canvas.width = document.body.clientWidth;
+      canvas.height = document.body.clientHeight;
+      width = document.body.clientWidth;
+      height = document.body.clientHeight;
       sheetengine.scene.init(canvas, {
-        w: 2000,
-        h: 1500
+        w: width * 2,
+        h: height * 2
       });
       sheetengine.scene.tilewidth = 200;
       basesheet = new sheetengine.BaseSheet({
@@ -20,10 +24,10 @@
         betaD: 0,
         gammaD: 0
       }, {
-        w: 750,
-        h: 750
+        w: width * 4,
+        h: width * 4
       });
-      basesheet.color = "#00537a#00537a";
+      basesheet.color = "#009fea";
       sheetengine.calc.calculateChangedSheets();
       sheetengine.drawing.drawScene(true);
       return setInterval(function() {
