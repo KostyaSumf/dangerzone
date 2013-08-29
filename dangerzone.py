@@ -13,11 +13,18 @@ keys = {}
 
 
 class Player:
+
     key = None
     admin = False
+    username = None
+    password = None
 
-    def __init__(self):
+    def __init__(self, username, password, admin):
         players.append(self)
+        self.username = username
+        self.password = password
+        self.admin = admin
+
         
 class Link:
     url = None
@@ -50,8 +57,7 @@ def admin():
     # commented out for testing, since the admin page doesn't do anything yet
     admin = True
     if admin:
-        links = []
-        links.append(Link("admin", "stop"))
+        links = [Link("admin", "stop")]
         return render_template('links.html', links=links, title='Dangerzone Administation')
     else:
         return Response(response="Invalid request. Either you have no authentication token in your cookies, "
@@ -70,7 +76,7 @@ def checkAdminAuth(key):
     :rtype boolean:
     """
     if key:
-        if keys.has_key(key):  # TODO: What is "in" and how does it replace "has_key"?
+        if key in keys:
             player = keys[key]
             if player.admin:
                 return True  # TODO: Return a static page only by python function?
@@ -86,6 +92,11 @@ if __name__ == '__main__':
     master_pass = str(os.environ.get('DZONE_MASTER_PASS'))
     if master_user == "" or master_pass == "" or master_user is None or master_pass is None:
         print "No master user or password given."
+        print "Using default user and password - You should change these ASAP."
+        Player(master_user, master_pass, True)
+    else:
+        print "A master user and password were given."
+        Player(master_user, master_pass, True)
     port = int(os.environ.get('PORT', 5000))
     app.debug = True
     app.run(host='0.0.0.0', port=port)
