@@ -33,3 +33,15 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# PyCharm
+.idea
+*.iml
+
+# venv
+venv
+
+# automatic mapping files created by pycharm
+.js
+coffee/*.js
+*.map

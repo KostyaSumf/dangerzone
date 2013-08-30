@@ -1,0 +1,17 @@
+box: alasershark/python-coffee
+
+build:
+    steps:
+        - script:
+            name: install requirements
+            code: sudo pip install -r requirements.txt
+        - script:
+            name: compile coffeescript
+            code: cake build
+    after-steps:
+        - alasershark/irc-notify:
+            server: irc.freenode.net
+            port: 6667
+            nickname: DangerouserBot
+            channel: shark
+            doublehashes: true
