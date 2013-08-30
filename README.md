@@ -1,6 +1,8 @@
 Dangerzone
 ===
 
+[![wercker status](https://app.wercker.com/status/ee2b5e9c35b912f7e7e822ade453073e/m "wercker status")](https://app.wercker.com/project/bykey/ee2b5e9c35b912f7e7e822ade453073e)
+
 A clone of [tribalhero](http://tribalhero.com/). 
 
 * [Main site.](http://dzgame.org) (Built off master. Persists between updates.)
