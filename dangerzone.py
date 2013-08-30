@@ -6,10 +6,15 @@ variables: 'DZONE_MASTER_USER', the master username, and 'DZONE_MASTER_PASS', th
 __author__ = 'alasershark'
 
 import os
+import random
+import hashlib
+import base64
+import json
 from flask import Flask, redirect, url_for, Response, request, render_template
 
 players = []
 keys = {}
+usernames = {}
 
 
 class Player:
@@ -22,11 +27,22 @@ class Player:
     def __init__(self, username, password, admin):
         players.append(self)
         self.username = username
+        usernames[username] = self
         self.password = password
         self.admin = admin
+        key = self.generateKey()
+        keys[key] = self
+        self.key = key
 
-        
+    def generateKey(self):
+        bits = str(random.getrandbits(256))
+        hashed = hashlib.sha256(bits)
+        encoded = base64.b64encode(hashed.digest(), "dZ").rstrip("==")
+        return encoded
+
+
 class Link:
+
     url = None
     name = None
     
@@ -53,15 +69,25 @@ def admin():
     """
     Will serve an admin page if player is an admin.
     """
-    # admin = checkAdminAuth(request.cookies.get('dzAuthKey'))
-    # commented out for testing, since the admin page doesn't do anything yet
-    admin = True
+    admin = checkAdminAuth(request.cookies.get('dzAuthKey'))
     if admin:
         links = [Link("admin", "stop")]
         return render_template('links.html', links=links, title='Dangerzone Administation')
     else:
         return Response(response="Invalid request. Either you have no authentication token in your cookies, "
                                  "your key is not a valid player, or that player is not an admin.", status=400)
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    j_son = str(request.data)
+    print j_son
+    stuff = json.loads(j_son)
+    if getPlayerKey(str(stuff['user']), str(stuff['password'])):
+        resp = Response(content_type='application/json', status=200, response=json.dumps({"success": True}))
+        resp.set_cookie('dzAuthKey', getPlayerKey(str(stuff['user']), str(stuff['password'])))
+        return resp
+    return Response(status=403)
 
 
 def checkAdminAuth(key):
@@ -71,29 +97,46 @@ def checkAdminAuth(key):
     * the auth key is actually a player
     * the auth key's player is an admin
 
-    Alternatively they can reach each different admin function via /admin/*, which will run through this function.
-
     :rtype boolean:
     """
     if key:
         if key in keys:
             player = keys[key]
             if player.admin:
-                return True  # TODO: Return a static page only by python function?
-            else:
-                return False
-        else:
-            return False
-    else:
-        return False
+                return True
+    return False
+
+
+def checkPlayerKey(key):
+    """
+    Same as checkAdminAuth, only without the admin check.
+    """
+
+    if key:
+        if key in keys:
+            return True
+    return False
+
+
+def getPlayerKey(user, password):
+    """
+    Returns a player's authkey, given their username and password.
+    """
+    if not user in usernames:
+        return None
+    player = usernames.get(user)
+    if player and player.password == password:
+        return player.key
+    return None
+
 
 if __name__ == '__main__':
-    master_user = str(os.environ.get('DZONE_MASTER_USER'))
-    master_pass = str(os.environ.get('DZONE_MASTER_PASS'))
+    master_user = os.environ.get('DZONE_MASTER_USER')
+    master_pass = os.environ.get('DZONE_MASTER_PASS')
     if master_user == "" or master_pass == "" or master_user is None or master_pass is None:
         print "No master user or password given."
         print "Using default user and password - You should change these ASAP."
-        Player(master_user, master_pass, True)
+        Player("oogooly", "boogooly", True)
     else:
         print "A master user and password were given."
         Player(master_user, master_pass, True)
