@@ -31,12 +31,22 @@ window.onload = ->
 
     sheetengine.calc.calculateChangedSheets()
     sheetengine.drawing.drawScene true
+    
+    cancas.addEventListener('click', 'clickReporter', false)
 
     setInterval(->
       # calculate sheets and draw scene
       sheetengine.calc.calculateChangedSheets()
       sheetengine.drawing.drawScene()
     , 30)
+    
+  clickReporter = (e) ->
+    
+    sheetengine.scene.setCenter(
+      x: e.clientX
+      y: e.clientY
+      z: 0
+    )
 
 
   init()
