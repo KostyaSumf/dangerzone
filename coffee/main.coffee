@@ -1,10 +1,10 @@
-window.onload = ->
+$(document).ready ->
 
   console.log('Initalizing.')
 
   init = ->
 
-    canvas = document.getElementById("mainCanvas")
+    canvas = document.getElementById("cvs")
     canvas.width = document.body.clientWidth
     canvas.height = document.body.clientHeight
     width = document.body.clientWidth
@@ -24,29 +24,28 @@ window.onload = ->
       betaD: 0
       gammaD: 0
     ,
-      w: width*4
-      h: width*4
+      w: width
+      h: width
     )
     basesheet.color = "#009fea"
 
     sheetengine.calc.calculateChangedSheets()
     sheetengine.drawing.drawScene true
-    
-    cancas.addEventListener('click', 'clickReporter', false)
+
+    $('#cvs').click((e) ->
+      console.log 'click ' + e.pageX + ' ' + e.pageY
+      sheetengine.scene.setCenter(
+        x: e.pageX
+        y: e.pageY
+        z: 0
+      )
+    )
 
     setInterval(->
       # calculate sheets and draw scene
       sheetengine.calc.calculateChangedSheets()
       sheetengine.drawing.drawScene()
     , 30)
-    
-  clickReporter = (e) ->
-    
-    sheetengine.scene.setCenter(
-      x: e.clientX
-      y: e.clientY
-      z: 0
-    )
 
 
   init()
