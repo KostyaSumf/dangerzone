@@ -16,6 +16,8 @@ players = []
 keys = {}
 usernames = {}
 
+# scroll to the bottom for a table of contents.
+
 
 class Player:
 
@@ -78,16 +80,31 @@ def admin():
                                  "your key is not a valid player, or that player is not an admin.", status=400)
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/api/account/login', methods=['POST'])
 def login():
+    """
+    If the player has correct login credentials, gives them a cookie with their key in it.
+    """
     j_son = str(request.data)
-    print j_son
+    # print j_son
     stuff = json.loads(j_son)
     if getPlayerKey(str(stuff['user']), str(stuff['password'])):
         resp = Response(content_type='application/json', status=200, response=json.dumps({"success": True}))
         resp.set_cookie('dzAuthKey', getPlayerKey(str(stuff['user']), str(stuff['password'])))
         return resp
-    return Response(status=403)
+    return Response(response='Invalid credentials and/or improperly formatted credentials.', status=403)
+
+
+@app.route('/api/account/make', methods=['POST'])
+def makeAccount():
+    """
+    Generates an account with the given credentials.
+    """
+    jsson = str(request.data)
+    stuff = json.loads(jsson)
+    player = Player(str(stuff['user']), str(stuff['password']), False)
+    return Response(content_type='application/json', status=200, response=json.dumps({"user": player.username,
+                                                                                      "password": player.password}))
 
 
 def checkAdminAuth(key):
@@ -110,6 +127,8 @@ def checkAdminAuth(key):
 def checkPlayerKey(key):
     """
     Same as checkAdminAuth, only without the admin check.
+
+    :rtype boolean:
     """
 
     if key:
@@ -143,3 +162,23 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.debug = True
     app.run(host='0.0.0.0', port=port)
+
+# Table of Contents:
+# Line 0008: Imports
+# Line 0022: Classes
+# - Line 0022: Player
+# - Line 0046: Link
+# Line 0056: Webpages (@app.routes)
+# - Line 0059: /
+# - Line 0069: /admin
+# - Line 0083: /api/
+# - - Line 0083: account/
+# - - - Line 0083: login
+# - - - Line 0098: make
+# Line 0108: Other misc methods
+# - Line 0108: checkAdminAuth
+# - Line 0125: checkPlayerKey
+# - Line 0136: getPlayerKey
+# - Line 0148: init
+#
+# Have fun coding! - sharky
