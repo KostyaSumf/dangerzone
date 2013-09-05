@@ -15,6 +15,8 @@ from flask import Flask, redirect, url_for, Response, request, render_template
 players = []
 keys = {}
 usernames = {}
+world = {}
+cities = {}
 
 # scroll to the bottom for a table of contents.
 
@@ -25,6 +27,7 @@ class Player:
     admin = False
     username = None
     password = None
+    cities = []
 
     def __init__(self, username, password, admin):
         players.append(self)
@@ -51,6 +54,30 @@ class Link:
     def __init__(self, home, name):
         self.url = home + "/" + name
         self.name = name
+
+
+class Building:
+
+    x = None
+    y = None
+    btype = None
+    owner = None
+
+    def __init__(self, x, y, btype, owner):
+        self.btype = btype
+        self.x = x
+        self.y = y
+        self.owner = owner
+        if not x in world:
+            world[x] = {}
+        if not y in world[x]:
+            world[x][y] = self
+        else:
+            raise Exception('already a building there')
+
+    def getData(self):
+        return {'type': self.btype,
+                'owner': self.owner}
 
 
 app = Flask(__name__)
@@ -105,6 +132,32 @@ def makeAccount():
     player = Player(str(stuff['user']), str(stuff['password']), False)
     return Response(content_type='application/json', status=200, response=json.dumps({"user": player.username,
                                                                                       "password": player.password}))
+
+
+@app.route('/api/world/tile', methods=['POST'])
+def getTile():
+    """
+    Fetches the tile with the given coordinates
+    """
+    jsson = str(request.data)
+    stuff = json.loads(jsson)
+    if not stuff.get('x') and stuff.get('y'):
+        return Response(response=400)
+    elif stuff['x'] in world and stuff['y'] in world['x']:
+        return Response(content_type='application/json', status=200,
+                        response=json.dumps(world[stuff['x']][stuff['y']].getData()))
+    else:
+        return Response(response=204)
+
+
+@app.route('api/world/city', methods=['POST'])
+def getCity():
+    """
+    Fetches the tiles that a certain city contains, along with the cities owner.
+    """
+    jsson = str(request.data)
+    stuff = json.loads(jsson)
+
 
 
 def checkAdminAuth(key):
@@ -163,22 +216,4 @@ if __name__ == '__main__':
     app.debug = True
     app.run(host='0.0.0.0', port=port)
 
-# Table of Contents:
-# Line 0008: Imports
-# Line 0022: Classes
-# - Line 0022: Player
-# - Line 0046: Link
-# Line 0056: Webpages (@app.routes)
-# - Line 0059: /
-# - Line 0069: /admin
-# - Line 0083: /api/
-# - - Line 0083: account/
-# - - - Line 0083: login
-# - - - Line 0098: make
-# Line 0108: Other misc methods
-# - Line 0108: checkAdminAuth
-# - Line 0125: checkPlayerKey
-# - Line 0136: getPlayerKey
-# - Line 0148: init
-#
 # Have fun coding! - sharky
