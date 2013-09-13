@@ -80,6 +80,18 @@ class Building:
                 'owner': self.owner}
 
 
+class City:
+
+    buildings = []
+
+    def __init__(self, x, y, owner):
+        self.buildings.append(Building(x, y, 'towncenter', owner))
+
+    def claimTile(self, x, y):
+        # TODO: City claim tile.
+        print 'claim tile'
+
+
 app = Flask(__name__)
 
 
@@ -134,6 +146,26 @@ def makeAccount():
                                                                                       "password": player.password}))
 
 
+@app.route('/api/action/found', methods=['POST'])
+def foundCity():
+    """
+    Founds a city if certain criteria are met.
+    """
+    jsson = str(request.data)
+    stuff = json.loads(jsson)
+    # TODO: Check for conditions
+    # TODO: Found city
+
+
+@app.route('/api/action/claim', methods=['POST'])
+def claimTile():
+    """
+    Claims a tile if possible.
+    """
+    stuff = json.loads(str(request.data))
+    # TODO: Check for conditions
+    # TODO: Found city
+
 @app.route('/api/world/tile', methods=['POST'])
 def getTile():
     """
@@ -157,7 +189,7 @@ def getCity():
     """
     jsson = str(request.data)
     stuff = json.loads(jsson)
-
+    # TODO get city data
 
 
 def checkAdminAuth(key):
